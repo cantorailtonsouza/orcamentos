@@ -45,6 +45,8 @@ const shows = {
   }
 };
 
+window.AILTON_SHOWS = shows;
+
 const $ = (s, c=document) => c.querySelector(s);
 const $$ = (s, c=document) => [...c.querySelectorAll(s)];
 const form = $("#budgetForm");
@@ -134,12 +136,52 @@ function validate(){
   let ok=true;
   $$("[required]",form).forEach(el=>{
     const bad=!String(el.value||"").trim();
-    el.classList.toggle("invalid",bad);if(bad)ok=false;
+    el.classList.toggle("invalid",bad);
+    if(bad)ok=false;
   });
-  if(!ok)toast("Preencha os campos obrigatórios","Confira cliente, evento, data e valor.");
+
+  const total=moneyNumber($("#totalValue").value);
+  const deposit=moneyNumber($("#depositValue").value);
+  const depositTooHigh=deposit>total && total>0;
+
+  $("#depositValue").classList.toggle("invalid",depositTooHigh);
+
+  if(depositTooHigh){
+    toast("Entrada maior que o valor total","A entrada precisa ser igual ou menor que o valor total do orçamento.");
+    return false;
+  }
+
+  if(!ok){
+    toast("Preencha os campos obrigatórios","Confira cliente, evento, data e valor.");
+  }
+
   return ok;
 }
-function printPdf(){if(!validate())return;update();window.print();}
+async function finalizeProposal(){
+  if(!validate())return;
+  update();
+  const buttons=[$("#pdfButton"),$("#printButton")].filter(Boolean);
+  buttons.forEach(button=>{button.disabled=true;button.dataset.originalText=button.textContent;button.textContent="Gerando PDF...";});
+  try{
+    const result=await window.AiltonPdf.shareOrDownload();
+    toast(result==="shared"?"Proposta compartilhada":"PDF baixado", result==="shared"?"Escolha o WhatsApp, Drive, Arquivos ou outro aplicativo.":"O arquivo foi salvo na pasta de downloads.");
+  }catch(error){
+    if(error?.name!=="AbortError"){
+      console.error(error);
+      toast("Não foi possível gerar o PDF", error?.message||"Tente novamente.");
+    }
+  }finally{
+    buttons.forEach(button=>{button.disabled=false;button.textContent=button.dataset.originalText||"Finalizar proposta";});
+  }
+}
+
+async function downloadPdf(){
+  if(!validate())return;
+  try{await window.AiltonPdf.download();toast("PDF baixado","O arquivo foi salvo no dispositivo.");}
+  catch(error){console.error(error);toast("Erro ao gerar PDF",error?.message||"Tente novamente.");}
+}
+
+function printPreview(){if(!validate())return;update();window.print();}
 function clearAll(){
   if(!confirm("Deseja limpar todos os dados deste orçamento?"))return;
   form.reset();localStorage.removeItem("ailtonManagerDraft");advanceToNextBudgetNumber();
@@ -196,8 +238,20 @@ function init(){
     else if(n.length>2)e.target.value=`(${n.slice(0,2)}) ${n.slice(2)}`;
     else e.target.value=n;
   });
-  [$("#totalValue"),$("#depositValue")].forEach(el=>el.addEventListener("blur",()=>{el.value=fieldMoney(el.value);update();}));
-  $("#saveButton").addEventListener("click",save);$("#printButton").addEventListener("click",printPdf);$("#pdfButton").addEventListener("click",printPdf);
+  [$("#totalValue"),$("#depositValue")].forEach(el=>el.addEventListener("blur",()=>{
+    el.value=fieldMoney(el.value);
+
+    const total=moneyNumber($("#totalValue").value);
+    const deposit=moneyNumber($("#depositValue").value);
+
+    if(el.id==="depositValue" && deposit>total && total>0){
+      $("#depositValue").value=fieldMoney(total);
+      toast("Entrada ajustada","A entrada foi limitada ao valor total do orçamento.");
+    }
+
+    update();
+  }));
+  $("#saveButton").addEventListener("click",save);$("#printButton").addEventListener("click",finalizeProposal);$("#pdfButton").addEventListener("click",finalizeProposal);$("#downloadButton")?.addEventListener("click",downloadPdf);$("#printPreviewButton")?.addEventListener("click",printPreview);
   $("#clearButton").addEventListener("click",clearAll);$("#returnButton").addEventListener("click",()=>nav("orcamento"));
   $$(".nav-button").forEach(b=>b.addEventListener("click",()=>{
     if(b.dataset.view==="orcamento" && !$("#orcamento").hidden){

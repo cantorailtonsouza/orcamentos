@@ -1,27 +1,14 @@
-# Ailton Manager — Orçamentos v1.2
+# Ailton Manager — Orçamentos v2.1
 
-Versão preparada para publicar no GitHub Pages.
+## Alterações
+- PDF real redesenhado para ficar visualmente semelhante à versão clássica de impressão.
+- Rodapé posicionado logo após o texto de agradecimento.
+- QR Code menor e melhor integrado ao rodapé.
+- Bloco de investimento no mesmo estilo escuro da versão preferida.
+- Marca-d'água mais discreta.
+- Entrada nunca pode ser maior que o valor total.
+- Ao sair do campo de entrada, o sistema limita automaticamente ao valor total.
+- A validação impede gerar ou compartilhar PDF com valor de entrada inválido.
 
-## Alterações finais
-- Logo preta oficial aplicada no PDF
-- QR Code ampliado
-- Favicon oficial do site principal
-- Numeração anual automática corrigida
-- Reimprimir o mesmo orçamento não altera o número
-- O próximo número só é criado ao iniciar um novo orçamento
-- Reinício automático por ano: 001/2026, 001/2027 etc.
-
-## Como usar
-1. Abra `index.html`.
-2. Preencha o orçamento.
-3. Clique em **Gerar PDF**.
-4. Escolha **Salvar como PDF**.
-
-## GitHub
-Envie o conteúdo desta pasta para o repositório `orcamentos`.
-
-
-## Correção v1.2.1
-- Corrigido erro de sintaxe no JavaScript que impedia todos os botões de funcionar.
-- Adicionado cache-busting no carregamento do `app.js`.
-- O botão **Novo orçamento** agora inicia um novo orçamento mediante confirmação.
+## Publicação
+Substitua todos os arquivos do repositório `orcamentos` pelo conteúdo desta pasta.

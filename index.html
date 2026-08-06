@@ -36,7 +36,7 @@
       </nav>
 
       <div class="sidebar-note">
-        <strong>Versão 1.0</strong>
+        <strong>Versão 2.0</strong>
         <span>Os dados ficam somente neste navegador.</span>
       </div>
     </aside>
@@ -50,7 +50,7 @@
         </div>
         <div class="header-actions">
           <button class="button secondary" id="clearButton" type="button">Limpar</button>
-          <button class="button primary" id="pdfButton" type="button">Gerar PDF</button>
+          <button class="button primary" id="pdfButton" type="button">Finalizar proposta</button>
         </div>
       </header>
 
@@ -326,9 +326,11 @@
               </div>
             </article>
 
-            <div class="preview-actions">
+            <div class="preview-actions proposal-actions">
               <button class="button secondary" id="saveButton" type="button">Salvar rascunho</button>
-              <button class="button primary" id="printButton" type="button">Imprimir / PDF</button>
+              <button class="button primary" id="printButton" type="button">Compartilhar PDF</button>
+              <button class="button secondary" id="downloadButton" type="button">Baixar PDF</button>
+              <button class="button secondary" id="printPreviewButton" type="button">Imprimir</button>
             </div>
           </div>
         </aside>
@@ -349,7 +351,8 @@
     <strong id="toastTitle"></strong>
     <span id="toastText"></span>
   </div>
-
-  <script src="js/app.js?v=1.2.1"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src="js/pdf.js?v=2.1.0"></script>
+  <script src="js/app.js?v=2.1.0"></script>
 </body>
 </html>
