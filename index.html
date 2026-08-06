@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a0b0e">
+  <meta name="description" content="Ailton Manager — criação de propostas comerciais para shows.">
+  <title>Ailton Manager • Orçamentos</title>
+  <link rel="icon" type="image/png" sizes="512x512" href="assets/images/favicon-512.png">
+  <link rel="apple-touch-icon" href="assets/images/favicon-192.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark"><img src="assets/images/logo-circular.webp" alt="Logo Ailton Souza"></div>
+        <div>
+          <strong>Ailton Manager</strong>
+          <span>Orçamentos de shows</span>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <button class="nav-button active" type="button" data-view="orcamento">
+          <span>＋</span> Novo orçamento
+        </button>
+        <button class="nav-button" type="button" data-view="rascunho">
+          <span>◷</span> Rascunho salvo
+        </button>
+      </nav>
+
+      <div class="sidebar-note">
+        <strong>Versão 1.0</strong>
+        <span>Os dados ficam somente neste navegador.</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="page-header">
+        <div>
+          <span class="eyebrow">Ailton Souza</span>
+          <h1>Novo orçamento</h1>
+          <p>Preencha os dados e confira exatamente o que será enviado ao cliente.</p>
+        </div>
+        <div class="header-actions">
+          <button class="button secondary" id="clearButton" type="button">Limpar</button>
+          <button class="button primary" id="pdfButton" type="button">Gerar PDF</button>
+        </div>
+      </header>
+
+      <section class="workspace" id="orcamento">
+        <form id="budgetForm" class="form-column" novalidate>
+          <section class="card">
+            <div class="card-heading">
+              <div><span>01</span><h2>Cliente</h2></div>
+              <p>Dados que poderão aparecer na proposta.</p>
+            </div>
+
+            <div class="grid two">
+              <label class="field span-2">
+                <span>Nome do cliente *</span>
+                <input id="clientName" name="clientName" type="text" placeholder="Ex.: Natália Rezende" required>
+              </label>
+
+              <label class="field">
+                <span>Telefone</span>
+                <input id="clientPhone" name="clientPhone" type="tel" placeholder="(61) 99999-9999">
+              </label>
+
+              <label class="field">
+                <span>E-mail</span>
+                <input id="clientEmail" name="clientEmail" type="email" placeholder="cliente@email.com">
+              </label>
+
+              <label class="field">
+                <span>Cidade</span>
+                <input id="clientCity" name="clientCity" type="text" placeholder="Luziânia - GO">
+              </label>
+
+              <label class="field">
+                <span>CPF/CNPJ</span>
+                <input id="clientDocument" name="clientDocument" type="text" placeholder="Opcional">
+              </label>
+
+              <label class="field span-2">
+                <span>Endereço</span>
+                <input id="clientAddress" name="clientAddress" type="text" placeholder="Rua, número, bairro e complemento">
+              </label>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="card-heading">
+              <div><span>02</span><h2>Evento</h2></div>
+              <p>Data, horário e local da apresentação.</p>
+            </div>
+
+            <div class="grid two">
+              <label class="field">
+                <span>Tipo de evento *</span>
+                <select id="eventType" name="eventType" required>
+                  <option value="">Selecione</option>
+                  <option>Casamento</option>
+                  <option>Aniversário</option>
+                  <option>Evento corporativo</option>
+                  <option>Festa particular</option>
+                  <option>Bar ou restaurante</option>
+                  <option>Festival</option>
+                  <option>Formatura</option>
+                  <option>Outro</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>Data do evento *</span>
+                <input id="eventDate" name="eventDate" type="date" required>
+              </label>
+
+              <label class="field">
+                <span>Horário</span>
+                <input id="eventTime" name="eventTime" type="time">
+              </label>
+
+              <label class="field">
+                <span>Cidade do evento</span>
+                <input id="eventCity" name="eventCity" type="text" placeholder="Brasília - DF">
+              </label>
+
+              <label class="field span-2">
+                <span>Local do evento</span>
+                <input id="eventVenue" name="eventVenue" type="text" placeholder="Nome do espaço ou endereço">
+              </label>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="card-heading">
+              <div><span>03</span><h2>Formato do show</h2></div>
+              <p>Selecione um produto do catálogo oficial.</p>
+            </div>
+
+            <div class="show-grid" id="showGrid"></div>
+
+            <div class="grid three top-gap">
+              <label class="field">
+                <span>Duração</span>
+                <select id="showDuration" name="showDuration">
+                  <option>2 horas</option>
+                  <option>2 horas e 30 minutos</option>
+                  <option selected>3 horas</option>
+                  <option>Personalizada</option>
+                </select>
+              </label>
+
+              <div class="field">
+                <span>Número do orçamento</span>
+                <div class="automatic-number" id="automaticNumber">Gerado automaticamente</div>
+                <input id="budgetNumber" name="budgetNumber" type="hidden">
+              </div>
+
+              <label class="field">
+                <span>Validade</span>
+                <select id="budgetValidity" name="budgetValidity">
+                  <option>7 dias</option>
+                  <option selected>15 dias</option>
+                  <option>30 dias</option>
+                  <option>Até a data do evento</option>
+                </select>
+              </label>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="card-heading">
+              <div><span>04</span><h2>Valor e pagamento</h2></div>
+              <p>Condições que serão apresentadas ao cliente.</p>
+            </div>
+
+            <div class="grid two">
+              <label class="field">
+                <span>Valor total *</span>
+                <div class="money"><b>R$</b><input id="totalValue" name="totalValue" inputmode="decimal" placeholder="2.800,00" required></div>
+              </label>
+
+              <label class="field">
+                <span>Entrada</span>
+                <div class="money"><b>R$</b><input id="depositValue" name="depositValue" inputmode="decimal" placeholder="1.400,00"></div>
+              </label>
+
+              <label class="field">
+                <span>Forma de pagamento</span>
+                <select id="paymentMethod" name="paymentMethod">
+                  <option>Pix</option>
+                  <option>Pix ou dinheiro</option>
+                  <option>Transferência bancária</option>
+                  <option>Cartão</option>
+                  <option>A combinar</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>Pagamento do saldo</span>
+                <select id="balanceDue" name="balanceDue">
+                  <option>No dia do evento</option>
+                  <option>Até 24 horas antes do evento</option>
+                  <option>Até 7 dias antes do evento</option>
+                  <option>Conforme contrato</option>
+                </select>
+              </label>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="card-heading">
+              <div><span>05</span><h2>Estrutura e condições</h2></div>
+              <p>Marque apenas o que realmente estiver incluso.</p>
+            </div>
+
+            <div class="checks">
+              <label><input type="checkbox" name="included" value="Sonorização"><span>Sonorização</span></label>
+              <label><input type="checkbox" name="included" value="Iluminação"><span>Iluminação</span></label>
+              <label><input type="checkbox" name="included" value="Palco"><span>Palco</span></label>
+              <label><input type="checkbox" name="included" value="Painel de LED"><span>Painel de LED</span></label>
+              <label><input type="checkbox" name="included" value="Transporte"><span>Transporte</span></label>
+              <label><input type="checkbox" name="included" value="Hospedagem"><span>Hospedagem</span></label>
+            </div>
+
+            <label class="field top-gap">
+              <span>Outras informações para o cliente</span>
+              <textarea id="clientNotes" name="clientNotes" rows="7"></textarea>
+            </label>
+
+            <details class="internal-note">
+              <summary>Observação interna — não aparece no PDF</summary>
+              <textarea id="internalNotes" name="internalNotes" rows="4" placeholder="Anotações particulares, custos, lembretes ou informações que não devem ser enviadas ao cliente."></textarea>
+            </details>
+          </section>
+        </form>
+
+        <aside class="preview-column">
+          <div class="preview-shell">
+            <div class="preview-top">
+              <span>Pré-visualização do cliente</span>
+              <b>Somente dados públicos</b>
+            </div>
+
+            <article class="paper" id="paper">
+              <img class="paper-watermark" src="assets/images/marca-dagua-as-preta.webp" alt="" aria-hidden="true">
+              <div class="paper-content">
+              <header class="paper-header">
+                <img class="paper-horizontal-logo" src="assets/images/logo-pdf-ailton-souza.webp" alt="Ailton Souza">
+                <div class="paper-heading-copy">
+                  <strong>PROPOSTA COMERCIAL</strong>
+                  <span>Apresentação Musical</span>
+                </div>
+                <div class="paper-number">
+                  <span>Orçamento</span>
+                  <strong id="pNumber">Nº —</strong>
+                </div>
+              </header>
+
+              <section class="paper-title">
+                <span>Apresentação musical</span>
+                <h2 id="pShow">Formato do show</h2>
+                <p id="pFormation">Formação e duração</p>
+              </section>
+
+              <div class="gold-line"></div>
+
+              <section class="paper-client">
+                <small>Cliente</small>
+                <strong id="pClient">Nome do cliente</strong>
+                <p id="pContact">Telefone e e-mail</p>
+              </section>
+
+              <section class="paper-grid">
+                <div><small>Evento</small><strong id="pEvent">A definir</strong></div>
+                <div><small>Data</small><strong id="pDate">A definir</strong></div>
+                <div><small>Horário</small><strong id="pTime">A definir</strong></div>
+                <div><small>Local</small><strong id="pPlace">A definir</strong></div>
+              </section>
+
+              <section class="paper-description">
+                <small>Descrição</small>
+                <p id="pDescription">A descrição comercial do formato selecionado aparecerá aqui.</p>
+              </section>
+
+              <section class="investment">
+                <span>Investimento</span>
+                <strong id="pTotal">R$ 0,00</strong>
+                <small id="pMethod">Forma de pagamento: Pix</small>
+              </section>
+
+              <section class="paper-grid payment-grid">
+                <div><small>Entrada</small><strong id="pDeposit">R$ 0,00</strong></div>
+                <div><small>Saldo</small><strong id="pBalance">R$ 0,00</strong></div>
+              </section>
+
+              <section class="paper-conditions">
+                <small>Condições da proposta</small>
+                <p id="pNotes">As condições aparecerão aqui.</p>
+              </section>
+
+              <section class="paper-closing">
+                Agradecemos pela oportunidade de apresentar esta proposta. Será uma satisfação fazer parte do seu evento, proporcionando uma apresentação musical de qualidade, profissionalismo e uma experiência memorável para você e seus convidados.
+              </section>
+
+              <footer class="paper-footer">
+                <div>
+                  <strong>Ailton Souza</strong>
+                  <span>Cantor • Eventos • Shows • Casamentos</span>
+                  <span>(61) 99584-0847 • cantorailtonsouza@gmail.com</span>
+                  <span>www.ailtonsouza.com.br</span>
+                </div>
+                <div class="paper-qr">
+                  <img src="assets/images/qrcode-site.png" alt="QR Code para www.ailtonsouza.com.br">
+                  <span>Acesse o site</span>
+                </div>
+              </footer>
+              </div>
+            </article>
+
+            <div class="preview-actions">
+              <button class="button secondary" id="saveButton" type="button">Salvar rascunho</button>
+              <button class="button primary" id="printButton" type="button">Imprimir / PDF</button>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section id="rascunho" class="hidden-view" hidden>
+        <div class="empty-state">
+          <span>◷</span>
+          <h2>Rascunho local</h2>
+          <p>Use “Salvar rascunho” no orçamento. Os dados ficam apenas neste navegador.</p>
+          <button class="button primary" id="returnButton" type="button">Voltar ao orçamento</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" aria-live="polite">
+    <strong id="toastTitle"></strong>
+    <span id="toastText"></span>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
