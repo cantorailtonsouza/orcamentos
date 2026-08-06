@@ -139,7 +139,7 @@ function validate(){
   if(!ok)toast("Preencha os campos obrigatórios","Confira cliente, evento, data e valor.");
   return ok;
 }
-function printPdf(){if(!validate())return;update();window.print();},500);}
+function printPdf(){if(!validate())return;update();window.print();}
 function clearAll(){
   if(!confirm("Deseja limpar todos os dados deste orçamento?"))return;
   form.reset();localStorage.removeItem("ailtonManagerDraft");advanceToNextBudgetNumber();
@@ -199,7 +199,13 @@ function init(){
   [$("#totalValue"),$("#depositValue")].forEach(el=>el.addEventListener("blur",()=>{el.value=fieldMoney(el.value);update();}));
   $("#saveButton").addEventListener("click",save);$("#printButton").addEventListener("click",printPdf);$("#pdfButton").addEventListener("click",printPdf);
   $("#clearButton").addEventListener("click",clearAll);$("#returnButton").addEventListener("click",()=>nav("orcamento"));
-  $$(".nav-button").forEach(b=>b.addEventListener("click",()=>nav(b.dataset.view)));
+  $$(".nav-button").forEach(b=>b.addEventListener("click",()=>{
+    if(b.dataset.view==="orcamento" && !$("#orcamento").hidden){
+      clearAll();
+      return;
+    }
+    nav(b.dataset.view);
+  }));
   const restored=restore();showAutomaticNumber();if(!restored)applyShow("Resenha");update();
 }
 document.addEventListener("DOMContentLoaded",init);

@@ -19,3 +19,9 @@ Versão preparada para publicar no GitHub Pages.
 
 ## GitHub
 Envie o conteúdo desta pasta para o repositório `orcamentos`.
+
+
+## Correção v1.2.1
+- Corrigido erro de sintaxe no JavaScript que impedia todos os botões de funcionar.
+- Adicionado cache-busting no carregamento do `app.js`.
+- O botão **Novo orçamento** agora inicia um novo orçamento mediante confirmação.
