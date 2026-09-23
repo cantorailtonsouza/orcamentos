@@ -1,0 +1,13 @@
+.auth-screen{min-height:100vh;min-height:100dvh;display:grid;place-items:center;padding:24px}
+.auth-screen[hidden],#loginForm[hidden],#authRetry[hidden]{display:none!important}
+.auth-card{width:100%;max-width:440px;padding:36px;border:1px solid var(--line);border-radius:24px;background:var(--panel);box-shadow:var(--shadow);text-align:center}
+.auth-logo{width:88px;height:88px;object-fit:contain;margin-bottom:24px;border-radius:50%}
+.auth-card h1{font-family:"Playfair Display",serif;font-size:2rem;margin:0}
+.auth-intro,.auth-footnote,#authStatus{color:var(--muted);line-height:1.6}
+.auth-intro{margin:12px 0 28px}.auth-footnote{font-size:.78rem;margin:24px 0 0}
+#loginForm{display:grid;gap:18px;text-align:left}#loginForm input{font-size:16px}
+.auth-error{color:#ffb4ab;font-size:.85rem;line-height:1.5;margin:0}.auth-error:empty{display:none}
+.auth-card button{width:100%}.auth-card button:disabled{opacity:.65;cursor:wait}
+.auth-card button:focus-visible,#logoutButton:focus-visible{outline:2px solid var(--gold2);outline-offset:4px}
+@media(max-width:520px){.auth-screen{padding:16px}.auth-card{padding:28px 22px}.header-actions{flex-wrap:wrap}}
+@media print{#managerApp[hidden]{display:none!important}.auth-screen{display:none!important}}

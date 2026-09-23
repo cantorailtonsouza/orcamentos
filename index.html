@@ -13,10 +13,30 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/auth.css?v=1">
+  <style>#managerApp[hidden]{display:none!important}</style>
 </head>
 
 <body>
-  <div class="app">
+  <section class="auth-screen" id="authScreen" aria-labelledby="loginTitle">
+    <div class="auth-card">
+      <img class="auth-logo" src="assets/images/logo-circular.webp" alt="Ailton Souza">
+      <span class="eyebrow">Área restrita</span>
+      <h1 id="loginTitle">Ailton Manager</h1>
+      <p class="auth-intro">Seus shows começam com uma boa proposta.</p>
+      <p id="authStatus" role="status">Verificando acesso…</p>
+      <form id="loginForm" hidden>
+        <label class="field"><span>E-mail</span><input id="loginEmail" type="email" autocomplete="username" inputmode="email" autocapitalize="none" spellcheck="false" required></label>
+        <label class="field"><span>Senha</span><input id="loginPassword" type="password" autocomplete="current-password" required></label>
+        <p id="loginError" class="auth-error" role="alert"></p>
+        <button id="loginButton" class="button primary" type="submit">Entrar</button>
+      </form>
+      <button id="authRetry" class="button secondary" type="button" hidden> Tentar novamente</button>
+      <p class="auth-footnote">Acesso exclusivo para usuários autorizados.<br>Sua sessão ficará ativa neste aparelho.</p>
+      <noscript>Ative o JavaScript para acessar o sistema.</noscript>
+    </div>
+  </section>
+  <div class="app" id="managerApp" hidden inert>
     <aside class="sidebar">
       <div class="brand">
         <div class="brand-mark"><img src="assets/images/logo-circular.webp" alt="Logo Ailton Souza"></div>
@@ -49,6 +69,7 @@
           <p>Preencha os dados e confira exatamente o que será enviado ao cliente.</p>
         </div>
         <div class="header-actions">
+          <button class="button secondary" id="logoutButton" type="button">Sair</button>
           <button class="button secondary" id="clearButton" type="button">Limpar</button>
           <button class="button primary" id="pdfButton" type="button">Finalizar proposta</button>
         </div>
@@ -354,5 +375,6 @@
   <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
   <script src="js/pdf.js?v=2.1.0"></script>
   <script src="js/app.js?v=2.1.0"></script>
+  <script src="js/auth.js?v=1"></script>
 </body>
 </html>
