@@ -63,7 +63,7 @@
       ]);
       sdk = authentication;
       const firebaseApp = firebase.initializeApp({
-        apiKey: "AIzaSyD0Yj9-3zLp0RsNqnYjF2B3SzcNmD9c8aw",
+        apiKey: "AIzaSyD0Yj9-3zLp0RsNqnYjF2B3SzcNmD9cgaw",
         authDomain: "ailton-manager.firebaseapp.com",
         projectId: "ailton-manager",
         storageBucket: "ailton-manager.firebasestorage.app",
