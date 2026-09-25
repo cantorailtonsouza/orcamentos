@@ -14,6 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/auth.css?v=1">
+  <link rel="stylesheet" href="css/drafts.css?v=1">
   <style>#managerApp[hidden]{display:none!important}</style>
 </head>
 
@@ -51,13 +52,13 @@
           <span>＋</span> Novo orçamento
         </button>
         <button class="nav-button" type="button" data-view="rascunho">
-          <span>◷</span> Rascunho salvo
+          <span>◷</span> Rascunhos salvos
         </button>
       </nav>
 
       <div class="sidebar-note">
         <strong>Versão 2.0</strong>
-        <span>Os dados ficam somente neste navegador.</span>
+        <span>Salve os rascunhos para abrir em outro aparelho.</span>
       </div>
     </aside>
 
@@ -353,16 +354,22 @@
               <button class="button secondary" id="downloadButton" type="button">Baixar PDF</button>
               <button class="button secondary" id="printPreviewButton" type="button">Imprimir</button>
             </div>
+            <p id="saveStatus" class="save-status" role="status">Clique em Salvar rascunho para guardar na nuvem.</p>
           </div>
         </aside>
       </section>
 
       <section id="rascunho" class="hidden-view" hidden>
-        <div class="empty-state">
-          <span>◷</span>
-          <h2>Rascunho local</h2>
-          <p>Use “Salvar rascunho” no orçamento. Os dados ficam apenas neste navegador.</p>
+        <div class="drafts-panel card">
+          <h2>Rascunhos compartilhados</h2>
+          <p>Abra um orçamento salvo para continuar e gerar o PDF.</p>
+          <div class="drafts-actions">
+          <button class="button secondary" id="refreshDrafts" type="button">Atualizar lista</button>
           <button class="button primary" id="returnButton" type="button">Voltar ao orçamento</button>
+          </div>
+          <p id="draftsStatus" role="status"></p>
+          <div id="draftsList" class="drafts-list"></div>
+          <button class="button secondary" id="moreDrafts" type="button" hidden>Carregar mais</button>
         </div>
       </section>
     </main>
@@ -374,7 +381,8 @@
   </div>
   <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
   <script src="js/pdf.js?v=2.1.0"></script>
-  <script src="js/app.js?v=2.1.0"></script>
-  <script src="js/auth.js?v=2"></script>
+  <script src="js/cloud.js?v=1"></script>
+  <script src="js/app.js?v=2.2.0"></script>
+  <script src="js/auth.js?v=3"></script>
 </body>
 </html>

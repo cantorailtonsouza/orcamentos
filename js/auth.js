@@ -75,7 +75,7 @@
       sdk.onAuthStateChanged(auth, (user) => {
         if (user) {
           if (!initialized) {
-            document.dispatchEvent(new Event("ailton:authenticated"));
+            document.dispatchEvent(new CustomEvent("ailton:authenticated", {detail: {firebaseApp, auth}}));
             initialized = true;
           }
           form.reset();
