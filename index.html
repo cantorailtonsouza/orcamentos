@@ -181,9 +181,10 @@
               </label>
 
               <div class="field">
-                <span>Número do orçamento</span>
-                <div class="automatic-number" id="automaticNumber">Gerado automaticamente</div>
-                <input id="budgetNumber" name="budgetNumber" type="hidden">
+                <label for="budgetNumber">Número do orçamento</label>
+                <input id="budgetNumber" name="budgetNumber" type="text" required maxlength="40" aria-describedby="automaticNumber">
+                <button id="automaticButton" type="button" class="button secondary">Automático</button>
+                <small id="automaticNumber">Sugestão anual automática. Você pode editar.</small>
               </div>
 
               <label class="field">
@@ -381,8 +382,8 @@
   </div>
   <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
   <script src="js/pdf.js?v=2.1.0"></script>
-  <script src="js/cloud.js?v=1"></script>
-  <script src="js/app.js?v=2.2.0"></script>
+  <script src="js/cloud.js?v=2"></script>
+  <script src="js/app.js?v=2.3.0"></script>
   <script src="js/auth.js?v=3"></script>
 </body>
 </html>

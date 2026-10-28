@@ -20,6 +20,7 @@
   }
 
   function failureMessage(error) {
+    if (error.code === "duplicate") return "Este número já pertence a outro orçamento na nuvem. Edite o número ou clique em Automático.";
     if (error.code === "conflict") return "Este rascunho foi alterado em outro aparelho. Abra a versão atual na lista antes de editar novamente.";
     if (error.code === "permission-denied") return "Acesso à nuvem negado. Confira as regras do Firestore.";
     if (error.code === "resource-exhausted") return "O limite de uso da nuvem foi atingido. Tente novamente mais tarde.";
@@ -48,7 +49,7 @@
   }
 
   async function saveDraft(data) {
-    if (busy) return;
+    if (busy) return false;
     lockControls(true);
     const button = document.getElementById("saveButton");
     button.textContent = "Salvando…";
@@ -59,6 +60,7 @@
     const target = {...active};
     try {
       const {sdk, db} = await database();
+      await checkNumber(data.budgetNumber, target.id);
       const ref = sdk.doc(db, "budgetDrafts", target.id);
       const revision = await sdk.runTransaction(db, async transaction => {
         const snapshot = await transaction.get(ref);
@@ -79,9 +81,12 @@
       const stored = localCopy(data);
       status.textContent = stored ? "Salvo na nuvem. Disponível nos outros aparelhos ao atualizar a lista." : "Salvo na nuvem. O navegador não permitiu guardar uma cópia local.";
       toast("Rascunho salvo na nuvem", "Vocês já podem abri-lo em outro aparelho.");
+      rememberBudgetNumber(data.budgetNumber);
+      return true;
     } catch (error) {
       status.textContent = failureMessage(error) + (locallySaved ? " Os dados ficaram salvos neste navegador." : " A cópia local também falhou. Mantenha esta página aberta.");
       toast("Não foi salvo na nuvem", status.textContent);
+      return false;
     } finally {
       lockControls(false);
       button.textContent = "Salvar rascunho";
@@ -147,7 +152,31 @@
   document.getElementById("budgetForm").addEventListener("change", () => {
     if (!busy) status.textContent = "Alterações ainda não enviadas. Clique em Salvar rascunho.";
   });
+  // Inspect every page, including legacy drafts without a separate number index.
+  async function numberHistory() {
+    const {sdk, db} = await database();
+    const rows = []; let after;
+    do {
+      const constraints = [sdk.orderBy("updatedAt", "desc"), sdk.limit(100)];
+      if (after) constraints.push(sdk.startAfter(after));
+      const page = await sdk.getDocsFromServer(sdk.query(sdk.collection(db, "budgetDrafts"), ...constraints));
+      rows.push(...page.docs); after = page.docs.length === 100 ? page.docs.at(-1) : null;
+    } while (after);
+    return rows;
+  }
+  async function checkNumber(number, id = active?.id) {
+    const canonical = value => String(value || "").trim().replace(/^0+(?=\d)/, "").toLowerCase();
+    const rows = await numberHistory();
+    if (rows.some(row => row.id !== id && canonical(row.data().data?.budgetNumber) === canonical(number))) throw {code: "duplicate"};
+  }
+  async function nextNumber(year) {
+    const rows = await numberHistory(); let max = 0;
+    rows.forEach(row => { const match = /^(\d+)\/(\d{4})$/.exec(row.data().data?.budgetNumber || "");
+      if (match && Number(match[2]) === year) max = Math.max(max, Number(match[1])); });
+    return max + 1;
+  }
   window.AiltonCloud = {
+    nextNumber, checkNumber,
     save: saveDraft, list: loadDrafts, restoreMetadata,
     hasActive: () => Boolean(active),
     reset() { active = null; status.textContent = "Clique em Salvar rascunho para guardar na nuvem."; }

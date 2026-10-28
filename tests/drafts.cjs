@@ -76,7 +76,11 @@ const firestoreModule = `
       return {context,page};
     }
     const a=await device('ailton@example.test');const p=a.page;
-    assert.equal(reads,0);assert.equal(writes,0);
+    await p.waitForFunction(()=>document.querySelector('#budgetNumber').value.includes('/'));
+    assert.equal(writes,0);
+    await p.screenshot({path:path.join(root,'numbering-mobile.png'),fullPage:true});
+    assert.equal(await p.evaluate(()=>formatBudgetNumber(1,2027)),'001/2027');
+    await p.locator('#budgetNumber').fill('042/2026');
     await p.locator('#clientName').fill('Cliente <b>Teste</b>');await p.locator('#eventType').selectOption('Casamento');await p.locator('#eventDate').fill('2026-12-20');
     await p.locator('#totalValue').fill('2.800,00');await p.locator('#totalValue').blur();assert.equal(await p.locator('#depositValue').inputValue(),'840,00');
     await p.locator('.internal-note summary').click();await p.locator('#internalNotes').fill('Anotação privada de teste');
@@ -84,6 +88,11 @@ const firestoreModule = `
     assert.equal(records.size,1);const id=[...records.keys()][0];const number=await p.locator('#budgetNumber').inputValue();
     await p.reload();await p.locator('#managerApp').waitFor({state:'visible'});assert.equal(await p.locator('#budgetNumber').inputValue(),number);assert.equal(await p.locator('#clientName').inputValue(),'Cliente <b>Teste</b>');
     const b=await device('iolanda@example.test');const q=b.page;
+    await q.waitForFunction(()=>document.querySelector('#budgetNumber').value==='043/2026');
+    await q.locator('#budgetNumber').fill('42/2026');await q.locator('#saveButton').click();
+    await q.waitForFunction(()=>document.querySelector('#saveStatus').textContent.includes('já pertence'));
+    assert.equal(records.size,1);
+    await q.locator('#automaticButton').click();await q.waitForFunction(()=>document.querySelector('#budgetNumber').value==='043/2026');
     await q.locator('[data-view="rascunho"]').click();await q.locator('.draft-row').waitFor();assert.equal(await q.locator('.draft-row h3').textContent(),'Cliente <b>Teste</b>');assert.equal(await q.locator('.draft-row b').count(),0);
     assert.equal(await q.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
     await q.locator('.draft-row button').click();await q.locator('#orcamento').waitFor({state:'visible'});assert.equal(await q.locator('#budgetNumber').inputValue(),number);assert.equal(await q.locator('#internalNotes').inputValue(),'Anotação privada de teste');
@@ -92,12 +101,13 @@ const firestoreModule = `
     await q.evaluate(()=>window.testCloudError='permission-denied');await q.locator('#saveButton').click();await q.waitForFunction(()=>document.querySelector('#saveStatus').textContent.includes('negado'));assert.equal(records.get(id).revision,2);await q.evaluate(()=>window.testCloudError=null);
     await b.context.setOffline(true);await q.locator('#clientCity').fill('Goiânia');await q.locator('#saveButton').click();await q.waitForFunction(()=>document.querySelector('#saveStatus').textContent.includes('conexão'));assert.equal(records.get(id).data.clientCity,'Brasília');await b.context.setOffline(false);
     await q.locator('#saveButton').click();await q.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Salvo na nuvem'));assert.equal(records.size,1);assert.equal(records.get(id).data.clientCity,'Goiânia');
-    const download=q.waitForEvent('download');await q.locator('#downloadButton').click();const pdf=await PDFDocument.load(fs.readFileSync(await (await download).path()));assert.ok(pdf.getPageCount()>0);
+    const download=q.waitForEvent('download');await q.locator('#downloadButton').click();const downloaded=await download;assert.ok(downloaded.suggestedFilename().includes('042-2026'));const pdf=await PDFDocument.load(fs.readFileSync(await downloaded.path()));assert.ok(pdf.getPageCount()>0);
+    const again=q.waitForEvent('download');await q.locator('#downloadButton').click();await again;assert.equal(await q.locator('#budgetNumber').inputValue(),number);assert.equal(records.size,1);
     await q.locator('#clearButton').click();await q.locator('#clientName').fill('Segundo orçamento');await q.locator('#saveButton').click();await q.waitForFunction(()=>document.querySelector('#saveStatus').textContent.startsWith('Salvo na nuvem'));assert.equal(records.size,2);assert.equal(records.get(id).data.clientCity,'Goiânia');
     for(let i=0;i<22;i++)records.set('pagination-'+i,{schemaVersion:1,revision:1,data:{clientName:'Paginação '+i},updatedAt:new Date(Date.now()+i*1000).toISOString()});
     await q.locator('[data-view="rascunho"]').click();await q.waitForFunction(()=>document.querySelectorAll('.draft-row').length===20);await q.locator('#moreDrafts').click();await q.waitForFunction(()=>document.querySelectorAll('.draft-row').length===24);assert.equal(await q.locator('#moreDrafts').isVisible(),false);
     await q.locator('#logoutButton').click();await q.locator('#loginForm').waitFor({state:'visible'});await q.emulateMedia({media:'print'});assert.equal(await q.locator('#managerApp').isVisible(),false);
     assert.deepEqual(errors,[]);
-    console.log('PASS: authenticated two-device saves and edits, no reads on login, local restore, preserved numbers, 30% deposit, conflict protection, permission/network failure, retry without duplication, real PDF generation, new draft isolation, pagination, mobile layout, escaped text, logout and print lock. Firebase simulated.');
+    console.log('PASS: annual formatting, manual numbers, automatic cloud suggestion, duplicate validation, repeated PDF with preserved number and filename, authenticated two-device saves and edits, local restore, 30% deposit, conflict protection, permission/network failure, retry without duplication, new draft isolation, pagination, mobile layout, escaped text, logout and print lock. Firebase simulated.');
   } finally {await browser.close();server.close();}
 })().catch(error=>{console.error(error);server.close();process.exitCode=1;});
