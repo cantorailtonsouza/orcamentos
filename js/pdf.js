@@ -436,6 +436,14 @@
       color: colors.muted,
     });
 
+    page.drawText("CNPJ: 55.996.515/0001-85", {
+      x: left,
+      y: y - 52,
+      size: 6.9,
+      font: fonts.regular,
+      color: colors.muted,
+    });
+
     const qrSize = 55;
     page.drawImage(qr, {
       x: right - qrSize - 48,
